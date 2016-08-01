@@ -18,15 +18,15 @@ $config['mysql'] = array(
 	'master' => array(
 		'host' => '121.41.21.58', //主机
 		'port' => '3306', //端口
-		'username' => 'fanghailiang', //用户名
-		'password' => 'fanghailiang', //密码
+		'username' => 'rubyphp', //用户名
+		'password' => 'rubyphp', //密码
 		'database' => 'rubyphp', //数据库
 	),
 	'slaver' => array(
 		'host' => '121.41.21.58', //主机
 		'port' => '3306', //端口
-		'username' => 'fanghailiang', //用户名
-		'password' => 'fanghailiang', //密码
+		'username' => 'rubyphp', //用户名
+		'password' => 'rubyphp', //密码
 		'database' => 'rubyphp', //数据库
 	),
 );
