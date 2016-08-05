@@ -13,8 +13,9 @@ if(!defined("APP_NAME")){
 $config['redis'] = array(
 	//'url路径'=>'模块路径:方法'
 	'enable' => true, //使用redis缓存
-	'host' => '127.0.0.1', //主机
+	'host' => '121.41.21.58', //主机
 	'port' => 6379, //端口号
+	'password' => 'rubyphp', //密码
 	'expire' => 300, //过期时间（秒）
 	'database' => 7, //redis缓存使用的数据库
 );

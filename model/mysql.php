@@ -21,6 +21,7 @@ class Mysql{
 		if($config['redis']['enable']){
 			$this->redis_connect = new Redis();
 			$this->redis_connect->connect($config['redis']['host'],$config['redis']['port']); 
+			$this->redis_connect->auth($config['redis']['password']);
 			$this->redis_connect->select($config['redis']['database']);
 		}
 	}

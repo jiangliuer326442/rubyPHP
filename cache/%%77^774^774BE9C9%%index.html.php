@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.30, created on 2016-08-01 09:47:49
+<?php /* Smarty version 2.6.30, created on 2016-08-03 09:53:02
          compiled from index.html */ ?>
 <!Doctype>
 <html>
@@ -19,16 +19,14 @@
 </h1></caption>
 				   <thead>
 					  <tr>
-						 <th>名称</th>
-						 <th>城市</th>
-						 <th>密码</th>
+						 <th>id</th>
+						 <th>评论</th>
 					  </tr>
 				   </thead>
 				   <tbody>
 					  <tr ng-repeat="x in datas">
-						 <td>{{x.name}}</td>
-						 <td>{{x.city}}</td>
-						 <td>{{x.pwd}}</td>
+						 <td>{{x.id}}</td>
+						 <td><a href="{{x.photo}}" target="_blank">{{x.comment}}</a></td>
 					  </tr>
 				   </tbody>
 				</table>
