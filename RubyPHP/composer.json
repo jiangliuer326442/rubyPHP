@@ -1,0 +1,7 @@
+{
+    "require": {
+        "qiniu/php-sdk": "^7.2",
+        "gaoming13/wechat-php-sdk": "1.*",
+        "phpmailer/phpmailer": "^6.0"
+    }
+}

@@ -4,22 +4,28 @@ class View{
 	
 	function __construct() {
 		global $config;
-        require 'libs/smarty/Smarty.class.php';
+        require FRAMEWORK.'libs/smarty/Smarty.class.php';
 		$this->smarty = new Smarty;
-
+		$this->smarty->register_function('importCss','importCss');  
+		$this->smarty->register_function('importJs','importJs');  
+		$this->smarty->register_function('importStatic','importStatic');  
 		$this->smarty->template_dir = 'view/';
-		$this->smarty->compile_dir = 'cache/';
+		$this->smarty->compile_dir = FRAMEWORK.'cache/';
+		$this->smarty->cache_lifetime = '3600';
+		if(strtolower(APP_MODEL) == 'debug'){
+			$this->smarty->clear_all_cache();
+		}
 		$this->smarty->left_delimiter = $config['tmpl']['left_delimiter'];
 		$this->smarty->right_delimiter = $config['tmpl']['right_delimiter'];
     }
 	
-	//ÎªÄ£°å·ÖÅä±äÁ¿
+	//ÎªÄ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	public function assign($key, $value){
 		$this->smarty->assign($key,$value);
 	}
 	
-	//·µ»ØjsonÊý¾Ý
-	public function return_json($status, $info, $data){
+	//ï¿½ï¿½ï¿½ï¿½jsonï¿½ï¿½ï¿½
+	public function return_json($status, $info, $data = array()){
 		header('content-type:application/json;charset=utf8');
 		$result['status'] = $status;
 		$result['info'] = $info;
@@ -27,7 +33,7 @@ class View{
 		exit(json_encode($result));
 	}
 	
-	//µ÷ÓÃÄ£°åÎÄ¼þ
+	//ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Ä¼ï¿½
 	public function display($file_path){
 		global $config;
 		$this->smarty->display($file_path.".".$config['tmpl']['prefix']);

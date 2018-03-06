@@ -1,24 +1,24 @@
 <?php
 class Controller{
-	private $view;
+	private $view = null;
 	
 	public function __construct(){
-		//¼ÓÔØÊÓÍ¼
-		require_once('view/view.php');
+		require_once(FRAMEWORK.'view/view.php');
 		$this->view = new View();
 	}
 	
-	//·µ»ØjsonÊý¾Ý
-	public function return_json($status, $info, $data){
+	//ï¿½ï¿½ï¿½ï¿½jsonï¿½ï¿½ï¿½
+	public function return_json($status, $info, $data = array()){
 		$this->view->return_json($status, $info, $data);
+		exit;
 	}
 	
-	//ÎªÄ£°å·ÖÅä±äÁ¿
+	//ÎªÄ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	public function assign($key, $value){
 		$this->view->assign($key, $value);
 	}
 	
-	//µ÷ÓÃÄ£°åÎÄ¼þ
+	//ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Ä¼ï¿½
 	public function display($file_path,$prefix = null,$cache = ''){
 		$this->view->display($file_path, $prefix, $cache);
 	}

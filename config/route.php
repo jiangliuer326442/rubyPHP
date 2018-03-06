@@ -12,7 +12,5 @@ if(!defined("APP_NAME")){
 
 $config['route'] = array(
 	//'url路径'=>'模块路径:方法'
-	'default' => 'default/welcome:index',
-	'getcities' => 'default/city:index',
-	'addcity' => 'default/city:add',
+	'default'						=> 'default/welcome:index',
 );
