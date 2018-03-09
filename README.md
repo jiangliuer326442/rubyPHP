@@ -94,7 +94,8 @@ server
         }   
     }
 ```
-url输入 http://swoole.fanghailiang.companyclub.cn/?id=4即可访问
+url输入 [http://swoole.fanghailiang.companyclub.cn/?id=4](http://swoole.fanghailiang.companyclub.cn/?id=4)即可访问
+![运行效果图]()
 2. cli模式运行
 吧原来的控制器移到scripts目录下
 controller/scripts/default/welcome.php
