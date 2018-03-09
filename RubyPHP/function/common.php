@@ -107,8 +107,7 @@ function isMobile(){
  * @return $result 执行sql语句的返回信息
  */
 function mysql_execute($sql, $prefix = ''){
-	require_once(FRAMEWORK.'model/mysql.php');
-	$mysql = new Mysql();
+	global $mysql;
 	$result = $mysql->mysql_query($sql, $prefix);
 	return $result;
 }
@@ -118,12 +117,7 @@ function mysql_execute($sql, $prefix = ''){
  *  设置和获取缓存
  */
 function S($key, $value = null, $expire = 120){
-	require_once("config/redis.php");
-	global $config;
-	$redis_connect = new Redis();
-	$redis_connect->connect($config['redis']['host'],$config['redis']['port']);
-	$redis_connect->auth($config['redis']['password']);
-	$redis_connect->select($config['redis']['database']);
+	global $redis_connect;
 	if($value == null){
 		return $redis_connect->get($key);
 	}else{
@@ -177,27 +171,6 @@ function M($tb_name, $prefix = ''){
 	return $db_instance;
 }
 
-/**
- * ThinkPHP I方法
- * @param $key 表单参数
- * @param $method post、get、all提交方式
- * @return $value 参数值
- */
-function I($key, $method='', $func = 'trim'){
-	global $my_routes;
-	$result = "";
-	if($method == 'post'){
-		$result = isset($_POST[$key])?$_POST[$key]:"";
-	}else if($method == 'get'){
-		$result = isset($_GET[$key])?$_GET[$key]:"";
-	}else{
-		$result = empty($_POST[$key])? (isset($_GET[$key])?$_GET[$key]:""):$_POST[$key];
-	}
-	if(empty($result) && $my_routes){
-		$result = $my_routes[$key];
-	}
-	return $func($result);
-}
 
 function ip() {
     //strcasecmp 比较两个字符，不区分大小写。返回0，>0，<0。

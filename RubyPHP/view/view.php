@@ -4,7 +4,7 @@ class View{
 	
 	function __construct() {
 		global $config;
-        require FRAMEWORK.'libs/smarty/Smarty.class.php';
+        require_once(FRAMEWORK.'libs/smarty/Smarty.class.php');
 		$this->smarty = new Smarty;
 		$this->smarty->register_function('importCss','importCss');  
 		$this->smarty->register_function('importJs','importJs');  
@@ -25,17 +25,27 @@ class View{
 	}
 	
 	//����json���
-	public function return_json($status, $info, $data = array()){
-		header('content-type:application/json;charset=utf8');
+	public function return_json($status, $info, $data, $response){
 		$result['status'] = $status;
 		$result['info'] = $info;
 		$result['data'] = $data;
-		exit(json_encode($result));
+		if(MODE == "CLI"){
+			header('content-type:application/json;charset=utf8');
+			swoole_exit(json_encode($result));
+		}else{
+			$response->header("content-type", "application/json;charset=utf8");
+			$response->end(json_encode($result));
+		}
 	}
 	
 	//����ģ���ļ�
-	public function display($file_path){
+	public function display($file_path, $response){
 		global $config;
-		$this->smarty->display($file_path.".".$config['tmpl']['prefix']);
+		if(MODE == "CLI"){
+			$this->smarty->display($file_path.".".$config['tmpl']['prefix']);
+		}else{
+			$response->header("Content-Type", "text/html;charset=utf-8");
+			$response->end($this->smarty->fetch($file_path.".".$config['tmpl']['prefix']));
+		}
 	}
 }

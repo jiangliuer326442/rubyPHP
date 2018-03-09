@@ -12,9 +12,9 @@ class Mysql{
 	//PDO连接数据库
 	public function __construct(){
 		global $config;
-		$this->master_connect = new PDO('mysql:host='.$config['mysql']['master']['host'].';dbname='.$config['mysql']['master']['database'].';port='.$config['mysql']['master']['port'],$config['mysql']['master']['username'],$config['mysql']['master']['password']);
+		$this->master_connect = new PDO('mysql:host='.$config['mysql']['master']['host'].';dbname='.$config['mysql']['master']['database'].';port='.$config['mysql']['master']['port'],$config['mysql']['master']['username'],$config['mysql']['master']['password'], array(PDO::ATTR_PERSISTENT => true));
 		$this->master_connect->exec('set names utf8');
-		$this->slaver_connect = new PDO('mysql:host='.$config['mysql']['slaver']['host'].';dbname='.$config['mysql']['slaver']['database'].';port='.$config['mysql']['slaver']['port'],$config['mysql']['slaver']['username'],$config['mysql']['slaver']['password']);
+		$this->slaver_connect = new PDO('mysql:host='.$config['mysql']['slaver']['host'].';dbname='.$config['mysql']['slaver']['database'].';port='.$config['mysql']['slaver']['port'],$config['mysql']['slaver']['username'],$config['mysql']['slaver']['password'], array(PDO::ATTR_PERSISTENT => true));
 		$this->slaver_connect->exec('set names utf8');
 	}
 	

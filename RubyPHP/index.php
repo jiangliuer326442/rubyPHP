@@ -1,4 +1,5 @@
 <?php 
+
 //应用名称
 define("APP_NAME","SVNTOOL");
 //开发状态（debug/production）
@@ -10,99 +11,104 @@ if(strtolower(APP_MODEL) == 'debug'){
 define('CONTROLLER','controller');
 define('MODEL','model');
 //加载公共函数文件
-require_once("function/common.php");
+require_once(FRAMEWORK."function/common.php");
 //加载路由配置文件
 require_once("config/route.php");
 //加载模板配置文件
 require_once("config/tpl.php");
-//家在第三方类库
+//加载数据库配置文件
+require_once("config/mysql.php");
+//加载redis配置文件
+require_once("config/redis.php");
+//加载第三方类库
 require_once("vendor/autoload.php");
+
+$param = getopt('p:r:q');
+
+if(isset($param['p'])){
+	//swoole方式运行
+	define("MODE", "SWOOLE");
+}else{
+	define("MODE", "CLI");
+}
+
+function swoole_exit($msg){
+    //php-fpm的环境
+    if (MODE=="CLI")
+    {
+        exit($msg);
+    }
+    //swoole的环境
+    else
+    {
+        throw new Swoole\ExitException($msg);
+    }
+}
+
+function dispatch($model_url, $request = NULL, $response = NULL){
+	global $config;
+	if(!strstr($model_url, ":")){
+		$model_url = $config['route']['404'];
+	}
+	list($file_path,$method_name) = explode(":", $model_url);
+	if(strstr($file_path,"/")){
+		$class_name = ucwords(substr($file_path, strrpos($file_path,"/")+1));
+	}else{
+		$class_name = ucwords($file_path);
+	}
+	if(!file_exists(CONTROLLER."/".$file_path.".php")){
+		swoole_exit('CONTROLLER NOT EXISTS:'.CONTROLLER."/".$file_path.".php");
+	}
+	/**
+	 * 控制器基类
+	 * 在控制器基类中处理模型和视图的基本解析
+	 */
+	require_once(CONTROLLER."/controller.php");
+	require_once(CONTROLLER."/".$file_path.".php");
+	if(!class_exists($class_name)){
+		swoole_exit('CLASS NOT EXISTS');
+	}
+	$controller = new $class_name($request, $response);
+	if(!is_callable(array($controller , $method_name))){
+		swoole_exit('METHOD NOT EXISTS');
+	}
+	//调用控制器
+	$controller->$method_name();
+}
+
+//加载视图
+require_once('view/view.php');
+$view = new View();
+//加载数据库连接
+require_once('model/mysql.php');
+$mysql = new Mysql();
+//建立redis连接
+$redis_connect = new Redis();                                                                                    
+$redis_connect->pconnect($config['redis']['host'],$config['redis']['port'], 2.5, 'x');
+$redis_connect->auth($config['redis']['password']);
+$redis_connect->select($config['redis']['database']);
+
+
+if(MODE == "SWOOLE"){
+	$port = $param['p'];
+	require_once("libs/server.php");
+	new Server($port);
+}
 
 //判断是否是cli模式
 //解析路由
 $model_url = "";
 $my_routes = array();
 
-if(is_cli()){
-	if(count($argv)>=2){
-		$model_url = 'scripts/'.$argv[1];
-		if(count($argv)>2){
-			for($i=2; $i<count($argv); $i++){
-				$tmp_arr = explode("=", $argv[$i]);
-				$my_routes[$tmp_arr[0]] = $tmp_arr[1];
-				unset($tmp_arr);
-			}
-		}
-	}	
-}else{
-	//根据url加载PHP模块（控制器）
-	$request_url = str_replace("/index.php/","",$_SERVER['PHP_SELF']);
-	$request_url = explode('.', str_replace_once( "/", "", $request_url))[0];
-	if($request_url == "") $request_url = "default";
-	foreach($config['route'] as $url => $model){
-		//完全匹配路由
-		if(!strstr($url, ":")){
-			if($url == $request_url){
-				$model_url = $model;
-				break;
-			}
-		}else{
-			$url_arr = explode("/", $url);
-			$request_url_arr = explode("/", $request_url);
-			if(count($url_arr) == count($request_url_arr)){
-				foreach($url_arr as $key => $val){
-					if(!strstr($val, ":")){
-						if($val != $request_url_arr[$key]){
-							break;
-						}
-					}else{
-						$my_routes[substr($val, 1)] = $request_url_arr[$key];
-					}
-					if($key+1 == count($url_arr)){
-						$model_url = $model;
-						break;
-					}
-				}
-			}
+if(count($argv)>=2){
+	$model_url = 'scripts/'.$argv[1];
+	if(count($argv)>2){
+		for($i=2; $i<count($argv); $i++){
+			$tmp_arr = explode("=", $argv[$i]);
+			$my_routes[$tmp_arr[0]] = $tmp_arr[1];
+			unset($tmp_arr);
 		}
 	}
-}
-if(!strstr($model_url, ":")){
-	$model_url = $config['route']['404'];
-}
-list($file_path,$method_name) = explode(":", $model_url);
-if(strstr($file_path,"/")){
-	$class_name = ucwords(substr($file_path, strrpos($file_path,"/")+1));
-}else{
-	$class_name = ucwords($file_path);
-}
-if(!file_exists(CONTROLLER."/".$file_path.".php")){
-	if(strtolower(APP_MODEL) == 'debug'){
-		die('CONTROLLER NOT EXISTS:'.CONTROLLER."/".$file_path.".php");
-	}else{
-		exit;
-	} 
-}
-/**
- * 控制器基类
- * 在控制器基类中处理模型和视图的基本解析
- */
-require_once(CONTROLLER."/controller.php");
-require_once(CONTROLLER."/".$file_path.".php");
-if(!class_exists($class_name)){
-	if(strtolower(APP_MODEL) == 'debug'){
-		die('CLASS NOT EXISTS');
-	}else{
-		exit;
-	} 
-}
-$controller = new $class_name();
-if(!is_callable(array($controller , $method_name))){
-	if(strtolower(APP_MODEL) == 'debug'){
-		die('METHOD NOT EXISTS');
-	}else{
-		exit;
-	} 
-}
-//调用控制器
-$controller->$method_name();
+}	
+
+dispatch($model_url);
