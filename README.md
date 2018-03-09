@@ -95,7 +95,7 @@ server
     }
 ```
 url输入 [http://swoole.fanghailiang.companyclub.cn/?id=4](http://swoole.fanghailiang.companyclub.cn/?id=4)即可访问
-![运行效果图]()
+![运行效果图](https://github.com/jiangliuer326442/rubyPHP/raw/master/Screenshots/show.png)
 2. cli模式运行
 吧原来的控制器移到scripts目录下
 controller/scripts/default/welcome.php
