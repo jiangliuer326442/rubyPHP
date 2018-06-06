@@ -1,5 +1,5 @@
 <?php
-require_once('libs/link/ShortURL/AutoLoader.php');
+require_once(FRAMEWORK.'libs/link/ShortURL/AutoLoader.php');
 
 //加载短信配置文件 
 require_once("config/link.php");

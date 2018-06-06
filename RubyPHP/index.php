@@ -11,17 +11,15 @@ if(strtolower(APP_MODEL) == 'debug'){
 define('CONTROLLER','controller');
 define('MODEL','model');
 //加载公共函数文件
-require_once(FRAMEWORK."function/common.php");
+require_once("function/common.php");
 //加载路由配置文件
 require_once("config/route.php");
 //加载模板配置文件
 require_once("config/tpl.php");
-//加载数据库配置文件
-require_once("config/mysql.php");
-//加载redis配置文件
-require_once("config/redis.php");
 //加载第三方类库
 require_once("vendor/autoload.php");
+//加载报错处理类
+require_once("libs/Exception/ExitException.php");
 
 $param = getopt('p:r:q');
 
@@ -32,16 +30,14 @@ if(isset($param['p'])){
 	define("MODE", "CLI");
 }
 
-function swoole_exit($msg){
+function swoole_exit($msg = ""){
     //php-fpm的环境
-    if (MODE=="CLI")
-    {
+    if (MODE=="CLI"){
         exit($msg);
     }
     //swoole的环境
-    else
-    {
-        throw new Swoole\ExitException($msg);
+    else{
+		throw new Swoole\Exception\ExitException($msg);
     }
 }
 
@@ -49,6 +45,9 @@ function dispatch($model_url, $request = NULL, $response = NULL){
 	global $config;
 	if(!strstr($model_url, ":")){
 		$model_url = $config['route']['404'];
+		if(MODE == "CLI"){
+			$model_url = "scripts/".$model_url;
+		}
 	}
 	list($file_path,$method_name) = explode(":", $model_url);
 	if(strstr($file_path,"/")){
@@ -79,15 +78,6 @@ function dispatch($model_url, $request = NULL, $response = NULL){
 //加载视图
 require_once('view/view.php');
 $view = new View();
-//加载数据库连接
-require_once('model/mysql.php');
-$mysql = new Mysql();
-//建立redis连接
-$redis_connect = new Redis();                                                                                    
-$redis_connect->pconnect($config['redis']['host'],$config['redis']['port'], 2.5, 'x');
-$redis_connect->auth($config['redis']['password']);
-$redis_connect->select($config['redis']['database']);
-
 
 if(MODE == "SWOOLE"){
 	$port = $param['p'];

@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.30, created on 2018-03-06 11:03:16
+<?php /* Smarty version 2.6.30, created on 2018-03-10 20:37:31
          compiled from admin/promo_list */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
 smarty_core_load_plugins(array('plugins' => array(array('modifier', 'cat', 'admin/promo_list', 8, false),)), $this); ?>

@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.30, created on 2018-03-06 12:33:55
+<?php /* Smarty version 2.6.30, created on 2018-03-10 20:30:53
          compiled from admin/vpn */ ?>
 <div class="panel panel-primary" style="width: 300px;">
 	<div class="panel-heading">

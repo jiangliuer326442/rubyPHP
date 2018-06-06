@@ -23,14 +23,15 @@ class Server
 
         $this->serv->start();
     }
-                                                                                                                         
+ 
     public function onRequest($request, $response) {
         global $config;
         //根据url加载PHP模块（控制器）
-        $request_url = substr($request->server['request_uri'], 1);
+        $request_url = $request->server['request_uri'];
         $request_url = explode('.', str_replace_once( "/", "", $request_url))[0];
         if($request_url == "") $request_url = "default";
 		$model_url = "";
+		$my_routes = array();
         foreach($config['route'] as $url => $model){
             //完全匹配路由
             if(!strstr($url, ":")){
@@ -58,8 +59,11 @@ class Server
                 }   
             }   
         } 
-		dispatch($model_url, $request, $response);  
-        
+		try{
+			dispatch($model_url, $request, $response);  
+		}catch(Swoole\Exception\ExitException $e){
+			echo $e;			
+		}
 /**     
         var_dump($request->get);
         var_dump($request->post);

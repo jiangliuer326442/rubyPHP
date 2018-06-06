@@ -11,8 +11,8 @@ class Controller{
 	//����json���
 	protected function return_json($status, $info, $data = array()){
 		global $view;
-		$view->return_json($status, $info, $data);
-		exit;
+		$view->return_json($status, $info, $data, $this->response);
+		swoole_exit();
 	}
 	
 	//Ϊģ��������
@@ -25,6 +25,14 @@ class Controller{
 	protected function display($file_path){
 		global $view;
 		$view->display($file_path, $this->response);
+	}
+
+	protected function isMobile(){
+		return isMobile($this->request->header["user-agent"]);
+	}
+
+	protected function D($model_name){
+		return D($model_name, $this->request, $this->response);
 	}
 
 	/**

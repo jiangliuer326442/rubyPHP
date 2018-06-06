@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.30, created on 2018-03-06 10:58:42
+<?php /* Smarty version 2.6.30, created on 2018-03-10 17:50:40
          compiled from admin/common_js */ ?>
 <script>
 var base_path = '<?php echo $this->_tpl_vars['base_path']; ?>

@@ -25,6 +25,19 @@ function wlog($content, $file = "log.txt", $end_flg = false){
 	file_put_contents($file,(date('Y-m-d H:i:s',time())).' '.$trace[0]['args'][0]." ".$trace[0]['file'].":".$trace[0]['line']."\r\n",FILE_APPEND | LOCK_EX );
 	if($end_flg) exit;
 }
+
+/*
+验证手机号
+*/
+function is_mobile( $text ) {
+    $search = '/^0?1[3|4|5|6|7|8][0-9]\d{8}$/';
+    if ( preg_match( $search, $text ) ) {
+        return ( true );
+    } else {
+        return ( false );
+    }
+}
+
 /*
 判断当前的运行环境是否是cli模式
 */
@@ -33,21 +46,7 @@ function is_cli(){
 }
 
 /*移动端判断*/
-function isMobile(){ 
-    // 如果有HTTP_X_WAP_PROFILE则一定是移动设备
-    if (isset ($_SERVER['HTTP_X_WAP_PROFILE']))
-    {
-        return true;
-    } 
-    // 如果via信息含有wap则一定是移动设备,部分服务商会屏蔽该信息
-    if (isset ($_SERVER['HTTP_VIA']))
-    { 
-        // 找不到为flase,否则为true
-        return stristr($_SERVER['HTTP_VIA'], "wap") ? true : false;
-    } 
-    // 脑残法，判断手机发送的客户端标志,兼容性有待提高
-    if (isset ($_SERVER['HTTP_USER_AGENT']))
-    {
+function isMobile($ua){ 
         $clientkeywords = array ('nokia',
             'sony',
             'ericsson',
@@ -82,21 +81,10 @@ function isMobile(){
             'mobile'
             ); 
         // 从HTTP_USER_AGENT中查找手机浏览器的关键字
-        if (preg_match("/(" . implode('|', $clientkeywords) . ")/i", strtolower($_SERVER['HTTP_USER_AGENT'])))
+        if (preg_match("/(" . implode('|', $clientkeywords) . ")/i", strtolower($ua)))
         {
             return true;
         } 
-    } 
-    // 协议法，因为有可能不准确，放到最后判断
-    if (isset ($_SERVER['HTTP_ACCEPT']))
-    { 
-        // 如果只支持wml并且不支持html那一定是移动设备
-        // 如果支持wml和html但是wml在html之前则是移动设备
-        if ((strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') !== false) && (strpos($_SERVER['HTTP_ACCEPT'], 'text/html') === false || (strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') < strpos($_SERVER['HTTP_ACCEPT'], 'text/html'))))
-        {
-            return true;
-        } 
-    } 
     return false;
 } 
 
@@ -107,7 +95,8 @@ function isMobile(){
  * @return $result 执行sql语句的返回信息
  */
 function mysql_execute($sql, $prefix = ''){
-	global $mysql;
+	require_once(FRAMEWORK.'model/mysql.php');
+	$mysql = new Mysql();
 	$result = $mysql->mysql_query($sql, $prefix);
 	return $result;
 }
@@ -117,7 +106,12 @@ function mysql_execute($sql, $prefix = ''){
  *  设置和获取缓存
  */
 function S($key, $value = null, $expire = 120){
-	global $redis_connect;
+	require_once("config/redis.php");
+	global $config;
+	$redis_connect = new Redis();
+	$redis_connect->connect($config['redis']['host'],$config['redis']['port']);
+	$redis_connect->auth($config['redis']['password']);
+	$redis_connect->select($config['redis']['database']);
 	if($value == null){
 		return $redis_connect->get($key);
 	}else{
@@ -148,7 +142,7 @@ function A($model_path){
  * ThinkPHP D方法
  * $model_name 模块名称
  */
-function D($model_name){
+function D($model_name, $request = null, $response = null){
 	if(file_exists(MODEL.'/'.$model_name.'.php')){
 		require_once(MODEL.'/'.$model_name.'.php');
 	}else{
@@ -156,7 +150,7 @@ function D($model_name){
 	}
 	$arr = explode("/",$model_name);
 	$class_name = ucwords(end($arr));
-	return new $class_name;
+	return new $class_name($request, $response);
 }
 
 /**
@@ -169,20 +163,4 @@ function M($tb_name, $prefix = ''){
 	require_once(FRAMEWORK.'model/mysql_tool.php');
 	$db_instance = Mysql_tool::setTable($tb_name, $prefix);
 	return $db_instance;
-}
-
-
-function ip() {
-    //strcasecmp 比较两个字符，不区分大小写。返回0，>0，<0。
-    if(getenv('HTTP_CLIENT_IP') && strcasecmp(getenv('HTTP_CLIENT_IP'), 'unknown')) {
-        $ip = getenv('HTTP_CLIENT_IP');
-    } elseif(getenv('HTTP_X_FORWARDED_FOR') && strcasecmp(getenv('HTTP_X_FORWARDED_FOR'), 'unknown')) {
-        $ip = getenv('HTTP_X_FORWARDED_FOR');
-    } elseif(getenv('REMOTE_ADDR') && strcasecmp(getenv('REMOTE_ADDR'), 'unknown')) {
-        $ip = getenv('REMOTE_ADDR');
-    } elseif(isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], 'unknown')) {
-        $ip = $_SERVER['REMOTE_ADDR'];
-    }
-    $res =  preg_match ( '/[\d\.]{7,15}/', $ip, $matches ) ? $matches [0] : '';
-	return $res;
 }

@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.30, created on 2018-03-06 10:27:29
+<?php /* Smarty version 2.6.30, created on 2018-03-20 20:00:51
          compiled from companyclub_pc.html */ ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +42,7 @@ tongshiquan/club_iconfont.css?v=20170907" rel="stylesheet">
   <script src="<?php echo $this->_tpl_vars['base_path']; ?>
 tongshiquan/lib.js?version=171023"></script>
   <script src="<?php echo $this->_tpl_vars['base_path']; ?>
-tongshiquan/javascript/main-0c084cf6dd4a9bb2ac61.js"></script>
+tongshiquan/javascript/main-058c54609e09a24e9cc9.js"></script>
 	<div id="background" style="position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; width: auto; height: auto; z-index: -100; background: url(http://cdn.companyclub.cn/tongshiquan/bg/1.jpg) no-repeat; background-size: cover;"> </div>
 	<div id="background_sub" style="opacity: 0; position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; width: auto; height: auto; z-index: -100; background: url(http://cdn.companyclub.cn/tongshiquan/bg/1.jpg) no-repeat; background-size: cover;"> </div>   
   <script type="text/javascript">

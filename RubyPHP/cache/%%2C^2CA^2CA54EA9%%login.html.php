@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.30, created on 2018-03-06 10:58:42
+<?php /* Smarty version 2.6.30, created on 2018-03-10 20:28:04
          compiled from admin/login.html */ ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -87,13 +87,12 @@ unset($_smarty_tpl_vars);
 			    		var userid = data.userid;
 						$.cookie('admin_userid', userid);
 						$.cookie('admin_token', token);
-			    		window.location.href="/admin";
-			    		
+			    		window.location.href="/admin";		
 			    	}else{
 			    		$(this).button('reset');
 			    		showerror(info);
 			    	}
-			    }.bind(this)
+			    }
 			});
 		});
 	});

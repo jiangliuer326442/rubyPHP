@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.30, created on 2018-03-06 11:21:57
+<?php /* Smarty version 2.6.30, created on 2018-03-20 18:56:37
          compiled from companyclub_wap.html */ ?>
 <!DOCTYPE html>
 <html>
@@ -21,6 +21,6 @@
 	<div id="app" style="width: 100%;"></div>
 	<script src="http://cdn.companyclub.cn/tongshiquan/lib.js?version=171021"></script>
 	<script src="<?php echo $this->_tpl_vars['base_path']; ?>
-tongshiquan/javascript/main-0c084cf6dd4a9bb2ac61.js"></script>
+tongshiquan/javascript/main-058c54609e09a24e9cc9.js"></script>
 </body>
 </html>
